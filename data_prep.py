@@ -1,6 +1,4 @@
 """
-FA-CRS Data Preparation Script (Days 1-3)
------------------------------------------
 Steps:
 1. Load MovieLens 1M data
 2. Fetch director name + production countries from TMDb API
@@ -30,10 +28,10 @@ from tqdm import tqdm
 
 # ─── CONFIG ───────────────────────────────────────────────────────────────────
 
-TMDB_API_KEY = "5782260b08afc35762a551c188457464"   # <-- paste your key here
-DATA_DIR     = "data/ml-1m"
+TMDB_API_KEY = "5782260b08afc35762a551c188457464"   
+DATA_DIR = "data/ml-25m"
 OUTPUT_PATH  = "data/movies_enriched.csv"
-CACHE_PATH   = "data/tmdb_cache.csv"  # saves progress so you can resume
+CACHE_PATH   = "data/tmdb_cache.csv"  
 
 # TMDb rate limit: ~40 requests/10 seconds. Sleep keeps it safe.
 SLEEP_BETWEEN_REQUESTS = 0.26
@@ -49,35 +47,17 @@ WESTERN_COUNTRIES = {
 
 def load_movielens(data_dir):
     movies = pd.read_csv(
-        os.path.join(data_dir, "movies.dat"),
-        sep="::",
-        engine="python",
-        header=None,
-        names=["movie_id", "title", "genres"],
-        encoding="latin-1"
-    )
+        os.path.join(data_dir, "movies.csv"),   # .csv not .dat
+        # no sep, encoding args needed
+    ).rename(columns={"movieId": "movie_id"})   # normalise column name
 
     ratings = pd.read_csv(
-        os.path.join(data_dir, "ratings.dat"),
-        sep="::",
-        engine="python",
-        header=None,
-        names=["user_id", "movie_id", "rating", "timestamp"],
-        encoding="latin-1"
-    )
+        os.path.join(data_dir, "ratings.csv"),
+    ).rename(columns={"movieId": "movie_id", "userId": "user_id"})
 
-    users = pd.read_csv(
-        os.path.join(data_dir, "users.dat"),
-        sep="::",
-        engine="python",
-        header=None,
-        names=["user_id", "gender", "age", "occupation", "zip"],
-        encoding="latin-1"
-    )
-
-    print(f"Loaded: {len(movies)} movies, {len(ratings)} ratings, {len(users)} users")
-    return movies, ratings, users
-
+    print(f"Loaded: {len(movies)} movies, {len(ratings)} ratings")
+    # No users.dat in 25M — return None for users
+    return movies, ratings, None
 
 # ─── TMDB SEARCH ──────────────────────────────────────────────────────────────
 
@@ -194,6 +174,7 @@ def main():
     # Load cache if it exists (lets you resume after interruption)
     if os.path.exists(CACHE_PATH):
         cache = pd.read_csv(CACHE_PATH)
+        cache["movie_id"] = cache["movie_id"].astype(int)
         done_ids = set(cache["movie_id"].tolist())
         print(f"Resuming from cache: {len(done_ids)} movies already fetched")
     else:
@@ -203,45 +184,63 @@ def main():
     detector = gender.Detector()
     rows = []
 
-    print(f"\nFetching TMDb data for {len(movies)} movies...")
-    for _, row in tqdm(movies.iterrows(), total=len(movies)):
-        mid = row["movie_id"]
+    import threading
+    from concurrent.futures import ThreadPoolExecutor, as_completed 
+    cache_lock = threading.Lock()
 
-        if mid in done_ids:
-            # Already in cache
-            cached = cache[cache["movie_id"] == mid].iloc[0]
-            director = cached["director"] if pd.notna(cached["director"]) else None
-            country_codes = cached["countries"].split("|") if pd.notna(cached["countries"]) and cached["countries"] else []
-        else:
-            title = clean_title(row["title"])
-            year  = extract_year(row["title"])
-            director, country_codes = fetch_tmdb_data(title, year, TMDB_API_KEY)
-            time.sleep(SLEEP_BETWEEN_REQUESTS)
-
-            # Save to cache
-            new_row = pd.DataFrame([{
-                "movie_id": mid,
-                "director": director,
-                "countries": "|".join(country_codes)
-            }])
-            cache = pd.concat([cache, new_row], ignore_index=True)
-
-            # Save cache every 50 movies
-            if len(cache) % 50 == 0:
-                cache.to_csv(CACHE_PATH, index=False)
-
-        director_gender = annotate_gender(director, detector)
-        region = classify_region(country_codes)
-
+    # First, load already-cached movies into rows directly
+    for _, cached_row in cache.iterrows():
+        mid = cached_row["movie_id"]
+        if mid not in movies["movie_id"].values:
+            continue
+        movie_row = movies[movies["movie_id"] == mid].iloc[0]
+        director = cached_row["director"] if pd.notna(cached_row["director"]) else None
+        country_codes = cached_row["countries"].split("|") if pd.notna(cached_row["countries"]) and cached_row["countries"] else []
         rows.append({
             "movie_id":        mid,
-            "title":           row["title"],
-            "genres":          row["genres"],
+            "title":           movie_row["title"],
+            "genres":          movie_row["genres"],
             "director":        director,
-            "director_gender": director_gender,
+            "director_gender": annotate_gender(director, detector),
             "countries":       "|".join(country_codes),
-            "region":          region
+            "region":          classify_region(country_codes)
         })
+
+    def process_movie(row):
+        mid   = row["movie_id"]
+        title = clean_title(row["title"])
+        year  = extract_year(row["title"])
+        director, country_codes = fetch_tmdb_data(title, year, TMDB_API_KEY)
+        time.sleep(SLEEP_BETWEEN_REQUESTS)
+        return mid, row["title"], row["genres"], director, country_codes
+    
+    movies["movie_id"] = movies["movie_id"].astype(int)
+    pending = movies[~movies["movie_id"].isin(done_ids)]
+    print(f"\nFetching TMDb data for {len(pending)} remaining movies (8 threads)...")
+
+    with ThreadPoolExecutor(max_workers=8) as executor:
+        futures = {executor.submit(process_movie, row): row for _, row in pending.iterrows()}
+        for future in tqdm(as_completed(futures), total=len(futures)):
+            mid, title, genres, director, country_codes = future.result()
+
+            director_gender = annotate_gender(director, detector)
+            region = classify_region(country_codes)
+            rows.append({
+                "movie_id":        mid,
+                "title":           title,
+                "genres":          genres,
+                "director":        director,
+                "director_gender": director_gender,
+                "countries":       "|".join(country_codes),
+                "region":          region
+            })
+
+            with cache_lock:
+                new_row = pd.DataFrame([{"movie_id": mid, "director": director,
+                                         "countries": "|".join(country_codes)}])
+                cache = pd.concat([cache, new_row], ignore_index=True)
+                if len(cache) % 50 == 0:
+                    cache.to_csv(CACHE_PATH, index=False)
 
     # Final cache save
     cache.to_csv(CACHE_PATH, index=False)
@@ -265,7 +264,7 @@ def main():
 
     # Also save ratings and users as-is for later steps
     ratings.to_csv("data/ratings.csv", index=False)
-    users.to_csv("data/users.csv", index=False)
+    #users.to_csv("data/users.csv", index=False)
     print("Saved ratings.csv and users.csv")
 
 

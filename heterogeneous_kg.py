@@ -23,6 +23,8 @@ Requirements: same as Day 4-6
 """
 
 import os
+os.environ["PYTORCH_CUDA_ALLOC_CONF"] = "expandable_segments:True"
+
 import json
 import numpy as np
 import pandas as pd
@@ -32,18 +34,20 @@ import torch.nn.functional as F
 from torch_geometric.nn import LightGCN
 from torch_geometric.utils import structured_negative_sampling
 from tqdm import tqdm
+import gc
 
 # ─── CONFIG ───────────────────────────────────────────────────────────────────
 
 DATA_DIR      = "data"
 OUTPUT_DIR    = "outputs/kg"
-EMBEDDING_DIM = 64
-NUM_LAYERS    = 3
+EMBEDDING_DIM = 32     # reduced from 64 to save GPU memory
+NUM_LAYERS    = 2      # reduced from 3 to save GPU memory
 LEARNING_RATE = 1e-3
-EPOCHS        = 50
+EPOCHS        = 30
 MIN_RATING    = 4
 TOP_K         = 10
 RANDOM_SEED   = 42
+SCORE_BATCH   = 512    # users per batch during evaluation to avoid OOM
 
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 torch.manual_seed(RANDOM_SEED)
@@ -59,6 +63,12 @@ def load_data():
 
     # Positive interactions only
     pos = ratings[ratings["rating"] >= MIN_RATING][["user_id", "movie_id"]].copy()
+
+    # Keep only active users (>=20 interactions) to reduce graph size
+    user_counts  = pos["user_id"].value_counts()
+    active_users = user_counts[user_counts >= 20].index
+    pos = pos[pos["user_id"].isin(active_users)].copy()
+    print(f"After filtering inactive users: {pos['user_id'].nunique()} users")
 
     # Re-index users and movies
     user_ids  = sorted(pos["user_id"].unique())
@@ -82,6 +92,13 @@ def load_data():
     movies["director_gender"] = movies["director_gender"].fillna("unknown")
     movies["region"]          = movies["region"].fillna("unknown")
     movies["genres"]          = movies["genres"].fillna("Unknown")
+
+    # Keep only directors with 2+ movies to reduce director node count
+    director_counts    = movies["director"].value_counts()
+    frequent_directors = set(director_counts[director_counts >= 2].index)
+    movies["director"] = movies["director"].apply(
+        lambda d: d if d in frequent_directors else "Unknown Director")
+    print(f"Director nodes after filtering singletons: {movies['director'].nunique()}")
 
     print(f"Users: {n_users}, Movies: {n_movies}")
     print(f"Positive interactions: {len(pos)}")
@@ -157,17 +174,16 @@ def build_kg(train_df, movies, n_users, n_movies):
     md_dst = torch.cat([dir_nodes, movie_nodes])
 
     # ── 3. Gender nodes ──
-    genders      = ["female", "male", "unknown"]
-    gender2idx   = {g: i for i, g in enumerate(genders)}
-    n_genders    = len(genders)
+    genders       = ["female", "male", "unknown"]
+    gender2idx    = {g: i for i, g in enumerate(genders)}
+    n_genders     = len(genders)
     gender_offset = dir_offset + n_directors
     print(f"Gender nodes: {n_genders}")
 
     # director -> gender edges
-    # map each movie's director to its gender node
-    dir_nodes_g  = torch.tensor(
+    dir_nodes_g = torch.tensor(
         [dir2idx[d] + dir_offset for d in movies["director"]], dtype=torch.long)
-    gen_nodes    = torch.tensor(
+    gen_nodes   = torch.tensor(
         [gender2idx[g] + gender_offset for g in movies["director_gender"]], dtype=torch.long)
 
     dg_src = torch.cat([dir_nodes_g, gen_nodes])
@@ -192,9 +208,9 @@ def build_kg(train_df, movies, n_users, n_movies):
     for g in movies["genres"]:
         for genre in g.split("|"):
             all_genres.add(genre.strip())
-    genres      = sorted(all_genres)
-    genre2idx   = {g: i for i, g in enumerate(genres)}
-    n_genres    = len(genres)
+    genres       = sorted(all_genres)
+    genre2idx    = {g: i for i, g in enumerate(genres)}
+    n_genres     = len(genres)
     genre_offset = region_offset + n_regions
     print(f"Genre nodes: {n_genres}")
 
@@ -295,28 +311,45 @@ def train_epoch(model, edge_index, n_users, optimizer):
     loss = model.bpr_loss(user_emb, movie_emb, edge_index, n_users)
     loss.backward()
     optimizer.step()
+    # Free intermediate tensors immediately after each step
+    torch.cuda.empty_cache()
+    gc.collect()
     return loss.item()
 
 
 # ─── EVALUATION ───────────────────────────────────────────────────────────────
 
 def get_recommendations(model, edge_index, train_df, n_users, n_movies):
+    """
+    Batched scoring to avoid OOM on large user sets.
+    Scores SCORE_BATCH users at a time instead of all at once.
+    """
     model.eval()
     with torch.no_grad():
         user_emb, movie_emb = model(edge_index)
+        # Move embeddings to CPU immediately to free GPU memory
+        user_emb  = user_emb.cpu()
+        movie_emb = movie_emb.cpu()
 
-    seen   = train_df.groupby("user_idx")["movie_idx"].apply(set).to_dict()
-    scores = torch.matmul(user_emb, movie_emb.T).cpu().numpy()
+    torch.cuda.empty_cache()
+
+    seen = train_df.groupby("user_idx")["movie_idx"].apply(set).to_dict()
 
     recs = {}
-    for u in range(n_users):
-        s = scores[u].copy()
-        for m in seen.get(u, set()):
-            if m < len(s):
-                s[m] = -np.inf
-        top = np.argpartition(s, -TOP_K)[-TOP_K:]
-        top = top[np.argsort(s[top])[::-1]]
-        recs[u] = top.tolist()
+    for start in range(0, n_users, SCORE_BATCH):
+        end         = min(start + SCORE_BATCH, n_users)
+        batch_emb   = user_emb[start:end]                          # [batch, dim]
+        batch_scores = torch.matmul(batch_emb, movie_emb.T).numpy() # [batch, n_movies]
+
+        for i, u in enumerate(range(start, end)):
+            s = batch_scores[i].copy()
+            for m in seen.get(u, set()):
+                if m < len(s):
+                    s[m] = -np.inf
+            top = np.argpartition(s, -TOP_K)[-TOP_K:]
+            top = top[np.argsort(s[top])[::-1]]
+            recs[u] = top.tolist()
+
     return recs
 
 
@@ -442,13 +475,13 @@ def main():
         print(f"{'Metric':<20} {'Baseline':>12} {'KG':>12} {'Change':>12}")
         print("-" * 58)
         metrics = [
-            ("NDCG@10",     "ndcg_at_10",  ndcg),
-            ("Precision@10","precision_at_10", p),
-            ("Recall@10",   "recall_at_10", r),
-            ("Gender SPD",  "gender_spd",  spd_g),
-            ("Gender EOD",  "gender_eod",  eod_g),
-            ("Region SPD",  "region_spd",  spd_r),
-            ("Region EOD",  "region_eod",  eod_r),
+            ("NDCG@10",      "ndcg_at_10",      ndcg),
+            ("Precision@10", "precision_at_10",  p),
+            ("Recall@10",    "recall_at_10",     r),
+            ("Gender SPD",   "gender_spd",       spd_g),
+            ("Gender EOD",   "gender_eod",       eod_g),
+            ("Region SPD",   "region_spd",       spd_r),
+            ("Region EOD",   "region_eod",       eod_r),
         ]
         for label, key, kg_val in metrics:
             base_val = baseline.get(key, 0)

@@ -1,64 +1,64 @@
 Recommendations for User 0:
 --------------------------------------------------
-#1 Tokyo Fist (1995) — Highlighted to support geographic diversity. This is a non-western production directed by Shinya Tsukamoto. Genre: Action, Drama.
-#2 Actor's Revenge, An (Yukinojo Henge) (1963) — Recommended based on your viewing history. Genre: Drama. Directed by Kon Ichikawa.
-#3 Piano, The (1993) — Recommended based on your viewing history. Genre: Drama, Romance. Directed by Jane Campion.
-#4 Stalker (1979) — Highlighted to support geographic diversity. This is a non-western production directed by Andrei Tarkovsky. Genre: Mystery, Sci-Fi.
-#5 Kissed (1996) — Recommended based on your viewing history. Genre: Romance. Directed by Lynne Stopkewich.
-#6 West Beirut (West Beyrouth) (1998) — Recommended based on your viewing history. Genre: Drama. Directed by Ziad Doueiri.
-#7 Saragossa Manuscript, The (Rekopis znaleziony w Saragossie) (1965) — Highlighted to support geographic diversity. This is a non-western production directed by Wojciech Has. Genre: Drama.
-#8 Return to Paradise (1998) — Recommended based on your viewing history. Genre: Drama, Romance. Directed by Joseph Ruben.
-#9 Sugar Town (1999) — Recommended based on your viewing history. Genre: Comedy. Directed by Allison Anders.
-#10 Blood For Dracula (Andy Warhol's Dracula) (1974) — Recommended based on your viewing history. Genre: Horror. Directed by Paul Morrissey.
+#1 Spirited Away (Sen to Chihiro no kamikakushi) (2001) — Highlighted to support geographic diversity. This is a non-western production directed by Hayao Miyazaki. Genre: Adventure, Animation, Fantasy.
+#2 Matrix, The (1999) — Recommended based on your viewing history. Genre: Action, Sci-Fi, Thriller. Directed by Lana Wachowski.
+#3 Shawshank Redemption, The (1994) — Recommended based on your viewing history. Genre: Crime, Drama. Directed by Frank Darabont.
+#4 Seven Samurai (Shichinin no samurai) (1954) — Highlighted to support geographic diversity. This is a non-western production directed by Akira Kurosawa. Genre: Action, Adventure, Drama.
+#5 Fight Club (1999) — Recommended based on your viewing history. Genre: Action, Crime, Drama, Thriller. Directed by David Fincher.
+#6 Braveheart (1995) — Recommended based on your viewing history. Genre: Action, Drama, War. Directed by Mel Gibson.
+#7 Old Boy (2003) — Highlighted to support geographic diversity. This is a non-western production directed by Park Chan-wook. Genre: Mystery, Thriller.
+#8 Godfather, The (1972) — Recommended based on your viewing history. Genre: Crime, Drama. Directed by Francis Ford Coppola.
+#9 Silence of the Lambs, The (1991) — Recommended based on your viewing history. Genre: Crime, Horror, Thriller. Directed by Jonathan Demme.
+#10 Little Miss Sunshine (2006) — Recommended based on your viewing history. Genre: Adventure, Comedy, Drama. Directed by Valerie Faris.
 
 Recommendations for User 1:
 --------------------------------------------------
-#1 Hard-Boiled (Lashou shentan) (1992) — Highlighted to support geographic diversity. This is a non-western production directed by John Woo. Genre: Action, Crime.
-#2 Boys Don't Cry (1999) — Recommended based on your viewing history. Genre: Drama. Directed by Kimberly Peirce.
-#3 Star Wars: Episode IV - A New Hope (1977) — Recommended based on your viewing history. Genre: Action, Adventure, Fantasy, Sci-Fi. Directed by George Lucas.
-#4 Raise the Red Lantern (1991) — Highlighted to support geographic diversity. This is a non-western production directed by Zhang Yimou. Genre: Drama.
-#5 L.A. Confidential (1997) — Recommended based on your viewing history. Genre: Crime, Film-Noir, Mystery, Thriller. Directed by Curtis Hanson.
-#6 Young Frankenstein (1974) — Recommended based on your viewing history. Genre: Comedy, Horror. Directed by Mel Brooks.
-#7 Gods Must Be Crazy, The (1980) — Highlighted to support geographic diversity. This is a non-western production directed by Jamie Uys. Genre: Comedy.
-#8 Back to the Future (1985) — Recommended based on your viewing history. Genre: Comedy, Sci-Fi. Directed by Robert Zemeckis.
-#9 Pulp Fiction (1994) — Recommended based on your viewing history. Genre: Crime, Drama. Directed by Quentin Tarantino.
-#10 Blazing Saddles (1974) — Recommended based on your viewing history. Genre: Comedy, Western. Directed by Mel Brooks.
+#1 Spirited Away (Sen to Chihiro no kamikakushi) (2001) — Highlighted to support geographic diversity. This is a non-western production directed by Hayao Miyazaki. Genre: Adventure, Animation, Fantasy.
+#2 Seven Samurai (Shichinin no samurai) (1954) — Recommended based on your viewing history. Genre: Action, Adventure, Drama. Directed by Akira Kurosawa.
+#3 Lost in Translation (2003) — Recommended based on your viewing history. Genre: Comedy, Drama, Romance. Directed by Sofia Coppola.
+#4 Old Boy (2003) — Highlighted to support geographic diversity. This is a non-western production directed by Park Chan-wook. Genre: Mystery, Thriller.
+#5 Pulp Fiction (1994) — Recommended based on your viewing history. Genre: Comedy, Crime, Drama, Thriller. Directed by Quentin Tarantino.
+#6 Fight Club (1999) — Recommended based on your viewing history. Genre: Action, Crime, Drama, Thriller. Directed by David Fincher.
+#7 My Neighbor Totoro (Tonari no Totoro) (1988) — Highlighted to support geographic diversity. This is a non-western production directed by Hayao Miyazaki. Genre: Animation, Children, Drama, Fantasy.
+#8 Little Miss Sunshine (2006) — Recommended based on your viewing history. Genre: Adventure, Comedy, Drama. Directed by Valerie Faris.
+#9 Godfather, The (1972) — Recommended based on your viewing history. Genre: Crime, Drama. Directed by Francis Ford Coppola.
+#10 Silence of the Lambs, The (1991) — Recommended based on your viewing history. Genre: Crime, Horror, Thriller. Directed by Jonathan Demme.
 
 Recommendations for User 2:
 --------------------------------------------------
-#1 Like Water for Chocolate (Como agua para chocolate) (1992) — Highlighted to support geographic diversity. This is a non-western production directed by Alfonso Arau. Genre: Drama, Romance.
-#2 Matrix, The (1999) — Recommended based on your viewing history. Genre: Action, Sci-Fi, Thriller. Directed by Lana Wachowski.
-#3 Terminator 2: Judgment Day (1991) — Recommended based on your viewing history. Genre: Action, Sci-Fi, Thriller. Directed by James Cameron.
-#4 Hard-Boiled (Lashou shentan) (1992) — Highlighted to support geographic diversity. This is a non-western production directed by John Woo. Genre: Action, Crime.
-#5 L.A. Confidential (1997) — Recommended based on your viewing history. Genre: Crime, Film-Noir, Mystery, Thriller. Directed by Curtis Hanson.
-#6 Braveheart (1995) — Recommended based on your viewing history. Genre: Action, Drama, War. Directed by Mel Gibson.
-#7 Yojimbo (1961) — Highlighted to support geographic diversity. This is a non-western production directed by Akira Kurosawa. Genre: Comedy, Drama, Western.
-#8 Godfather, The (1972) — Recommended based on your viewing history. Genre: Action, Crime, Drama. Directed by Francis Ford Coppola.
-#9 Shawshank Redemption, The (1994) — Recommended based on your viewing history. Genre: Drama. Directed by Frank Darabont.
-#10 Producers, The (1968) — Recommended based on your viewing history. Genre: Comedy, Musical. Directed by Mel Brooks.
+#1 Spirited Away (Sen to Chihiro no kamikakushi) (2001) — Highlighted to support geographic diversity. This is a non-western production directed by Hayao Miyazaki. Genre: Adventure, Animation, Fantasy.
+#2 Braveheart (1995) — Recommended based on your viewing history. Genre: Action, Drama, War. Directed by Mel Gibson.
+#3 One Flew Over the Cuckoo's Nest (1975) — Recommended based on your viewing history. Genre: Drama. Directed by Miloš Forman.
+#4 My Neighbor Totoro (Tonari no Totoro) (1988) — Highlighted to support geographic diversity. This is a non-western production directed by Hayao Miyazaki. Genre: Animation, Children, Drama, Fantasy.
+#5 Raiders of the Lost Ark (Indiana Jones and the Raiders of the Lost Ark) (1981) — Recommended based on your viewing history. Genre: Action, Adventure. Directed by Steven Spielberg.
+#6 Young Frankenstein (1974) — Recommended based on your viewing history. Genre: Comedy, Fantasy. Directed by Mel Brooks.
+#7 Howl's Moving Castle (Hauru no ugoku shiro) (2004) — Highlighted to support geographic diversity. This is a non-western production directed by Hayao Miyazaki. Genre: Adventure, Animation, Fantasy, Romance.
+#8 Seven (a.k.a. Se7en) (1995) — Recommended based on your viewing history. Genre: Mystery, Thriller. Directed by David Fincher.
+#9 Saving Private Ryan (1998) — Recommended based on your viewing history. Genre: Action, Drama, War. Directed by Steven Spielberg.
+#10 Piano, The (1993) — Recommended based on your viewing history. Genre: Drama, Romance. Directed by Jane Campion.
 
 Recommendations for User 3:
 --------------------------------------------------
-#1 Shall We Dance? (Shall We Dansu?) (1996) — Highlighted to support geographic diversity. This is a non-western production directed by Masayuki Suō. Genre: Comedy.
-#2 Matrix, The (1999) — Recommended based on your viewing history. Genre: Action, Sci-Fi, Thriller. Directed by Lana Wachowski.
-#3 American Beauty (1999) — Recommended based on your viewing history. Genre: Comedy, Drama. Directed by Sam Mendes.
-#4 To Live (Huozhe) (1994) — Highlighted to support geographic diversity. This is a non-western production directed by Zhang Yimou. Genre: Drama.
-#5 Shawshank Redemption, The (1994) — Recommended based on your viewing history. Genre: Drama. Directed by Frank Darabont.
-#6 Braveheart (1995) — Recommended based on your viewing history. Genre: Action, Drama, War. Directed by Mel Gibson.
-#7 Akira (1988) — Highlighted to support geographic diversity. This is a non-western production directed by Katsuhiro Otomo. Genre: Adventure, Animation, Sci-Fi, Thriller.
-#8 2001: A Space Odyssey (1968) — Recommended based on your viewing history. Genre: Drama, Mystery, Sci-Fi, Thriller. Directed by Stanley Kubrick.
-#9 Monty Python and the Holy Grail (1974) — Recommended based on your viewing history. Genre: Comedy. Directed by Unknown Director.
-#10 Blazing Saddles (1974) — Recommended based on your viewing history. Genre: Comedy, Western. Directed by Mel Brooks.
+#1 Old Boy (2003) — Highlighted to support geographic diversity. This is a non-western production directed by Park Chan-wook. Genre: Mystery, Thriller.
+#2 Braveheart (1995) — Recommended based on your viewing history. Genre: Action, Drama, War. Directed by Mel Gibson.
+#3 Shawshank Redemption, The (1994) — Recommended based on your viewing history. Genre: Crime, Drama. Directed by Frank Darabont.
+#4 My Neighbor Totoro (Tonari no Totoro) (1988) — Highlighted to support geographic diversity. This is a non-western production directed by Hayao Miyazaki. Genre: Animation, Children, Drama, Fantasy.
+#5 Fight Club (1999) — Recommended based on your viewing history. Genre: Action, Crime, Drama, Thriller. Directed by David Fincher.
+#6 Lost in Translation (2003) — Recommended based on your viewing history. Genre: Comedy, Drama, Romance. Directed by Sofia Coppola.
+#7 Howl's Moving Castle (Hauru no ugoku shiro) (2004) — Highlighted to support geographic diversity. This is a non-western production directed by Hayao Miyazaki. Genre: Adventure, Animation, Fantasy, Romance.
+#8 Godfather, The (1972) — Recommended based on your viewing history. Genre: Crime, Drama. Directed by Francis Ford Coppola.
+#9 Silence of the Lambs, The (1991) — Recommended based on your viewing history. Genre: Crime, Horror, Thriller. Directed by Jonathan Demme.
+#10 Little Miss Sunshine (2006) — Recommended based on your viewing history. Genre: Adventure, Comedy, Drama. Directed by Valerie Faris.
 
 Recommendations for User 4:
 --------------------------------------------------
-#1 Like Water for Chocolate (Como agua para chocolate) (1992) — Highlighted to support geographic diversity. This is a non-western production directed by Alfonso Arau. Genre: Drama, Romance.
-#2 Braveheart (1995) — Recommended based on your viewing history. Genre: Action, Drama, War. Directed by Mel Gibson.
-#3 Star Wars: Episode IV - A New Hope (1977) — Recommended based on your viewing history. Genre: Action, Adventure, Fantasy, Sci-Fi. Directed by George Lucas.
-#4 Yojimbo (1961) — Highlighted to support geographic diversity. This is a non-western production directed by Akira Kurosawa. Genre: Comedy, Drama, Western.
-#5 Raiders of the Lost Ark (1981) — Recommended based on your viewing history. Genre: Action, Adventure. Directed by Steven Spielberg.
-#6 Blazing Saddles (1974) — Recommended based on your viewing history. Genre: Comedy, Western. Directed by Mel Brooks.
-#7 Arthur (1981) — Highlighted to support geographic diversity. This is a non-western production directed by Toshio Masuda. Genre: Comedy, Romance.
-#8 Terminator 2: Judgment Day (1991) — Recommended based on your viewing history. Genre: Action, Sci-Fi, Thriller. Directed by James Cameron.
-#9 Star Wars: Episode V - The Empire Strikes Back (1980) — Recommended based on your viewing history. Genre: Action, Adventure, Drama, Sci-Fi, War. Directed by Irvin Kershner.
-#10 Young Frankenstein (1974) — Recommended based on your viewing history. Genre: Comedy, Horror. Directed by Mel Brooks.
+#1 Forbidden City Cop (Dai lap mat tam 008) (1996) — Highlighted to support geographic diversity. This is a non-western production directed by Vincent Kok Tak-Chiu. Genre: Action, Comedy.
+#2 Live Nude Girls (1995) — Recommended based on your viewing history. Genre: Comedy. Directed by Unknown Director.
+#3 Homeward Bound II: Lost in San Francisco (1996) — Recommended based on your viewing history. Genre: Adventure, Children. Directed by David R. Ellis.
+#4 Wooden Man's Bride, The (Yan shen) (1994) — Highlighted to support geographic diversity. This is a non-western production directed by Unknown Director. Genre: Drama.
+#5 Flipper (1996) — Recommended based on your viewing history. Genre: Adventure, Children. Directed by Unknown Director.
+#6 Captives (1994) — Recommended based on your viewing history. Genre: Crime, Drama, Romance, Thriller. Directed by Angela Pope.
+#7 Housefull 2 (2012) — Highlighted to support geographic diversity. This is a non-western production directed by Sajid Khan. Genre: Comedy, Romance.
+#8 Two if by Sea (1996) — Recommended based on your viewing history. Genre: Comedy, Romance. Directed by Bill Bennett.
+#9 Eddie (1996) — Recommended based on your viewing history. Genre: Comedy. Directed by Steve Rash.
+#10 15 Years and One Day (2013) — Recommended based on your viewing history. Genre: Drama. Directed by Unknown Director.
