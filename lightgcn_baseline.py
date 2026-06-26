@@ -33,11 +33,11 @@ import json
 
 DATA_DIR       = "data"
 OUTPUT_DIR     = "outputs/baseline"
-EMBEDDING_DIM  = 64
-NUM_LAYERS     = 3
+EMBEDDING_DIM  = 32
+NUM_LAYERS     = 2
 LEARNING_RATE  = 1e-3
-EPOCHS         = 50
-BATCH_SIZE     = 2048
+EPOCHS         = 30
+BATCH_SIZE     = 4096
 MIN_RATING     = 4        # threshold for "positive" interaction
 TOP_K          = 10       # for evaluation metrics
 RANDOM_SEED    = 42
@@ -53,7 +53,7 @@ print(f"Using device: {device}")
 def load_data():
     ratings  = pd.read_csv(os.path.join(DATA_DIR, "ratings.csv"))
     movies   = pd.read_csv(os.path.join(DATA_DIR, "movies_enriched.csv"))
-    users    = pd.read_csv(os.path.join(DATA_DIR, "users.csv"))
+    #users    = pd.read_csv(os.path.join(DATA_DIR, "users.csv"))
 
     # Keep only positive interactions
     pos = ratings[ratings["rating"] >= MIN_RATING][["user_id", "movie_id"]].copy()
@@ -217,16 +217,18 @@ def get_recommendations(model, edge_index, train_df, n_users, n_movies, top_k):
     # Movies seen per user in training
     seen = train_df.groupby("user_idx")["movie_idx"].apply(set).to_dict()
 
-    scores = torch.matmul(user_emb, movie_emb.T).cpu().numpy()  # [n_users, n_movies]
-
+    SCORE_BATCH = 1000
     recs = {}
-    for u in range(n_users):
-        seen_u = seen.get(u, set())
-        s = scores[u].copy()
-        s[list(seen_u)] = -np.inf
-        top = np.argpartition(s, -top_k)[-top_k:]
-        top = top[np.argsort(s[top])[::-1]]
-        recs[u] = top.tolist()
+    for start in range(0, n_users, SCORE_BATCH):
+        end = min(start + SCORE_BATCH, n_users)
+        batch_scores = torch.matmul(user_emb[start:end], movie_emb.T).cpu().numpy()
+        for i, u in enumerate(range(start, end)):
+            seen_u = seen.get(u, set())
+            s = batch_scores[i].copy()
+            s[list(seen_u)] = -np.inf
+            top = np.argpartition(s, -top_k)[-top_k:]
+            top = top[np.argsort(s[top])[::-1]]
+            recs[u] = top.tolist()
 
     return recs
 

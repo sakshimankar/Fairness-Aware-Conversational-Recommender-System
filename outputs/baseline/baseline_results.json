@@ -1,10 +1,10 @@
 {
   "model": "LightGCN_bipartite_baseline",
-  "precision_at_10": 0.0025,
-  "recall_at_10": 0.0042,
-  "ndcg_at_10": 0.0033,
-  "gender_spd": -0.8176,
-  "gender_eod": -0.0006,
-  "region_spd": -0.9985,
-  "region_eod": -0.0019
+  "precision_at_10": 0.0097,
+  "recall_at_10": 0.0273,
+  "ndcg_at_10": 0.0148,
+  "gender_spd": -0.7482,
+  "gender_eod": -0.001,
+  "region_spd": -0.9992,
+  "region_eod": -0.0108
 }

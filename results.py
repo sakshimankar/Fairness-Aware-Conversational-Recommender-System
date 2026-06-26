@@ -45,7 +45,7 @@ def make_table():
 
     lines = []
     lines.append("=" * 72)
-    lines.append("TABLE 1: System Comparison (FA-CRS on MovieLens-1M)")
+    lines.append("TABLE 1: System Comparison (FA-CRS on MovieLens-25M)")
     lines.append("=" * 72)
     lines.append(f"{'Metric':<22} {'Baseline':>12} {'KG':>12} {'KG+FA*IR':>12} {'Δ (Fair)':>12}")
     lines.append("-" * 72)
@@ -129,7 +129,7 @@ def plot_fut_combined():
     ax1.legend(lines1 + lines2, labels1 + labels2,
                loc="upper right", fontsize=9, framealpha=0.9)
 
-    plt.title("Fairness-Utility Tradeoff (FUT) Curve\nKG + FA*IR on MovieLens-1M",
+    plt.title("Fairness-Utility Tradeoff (FUT) Curve\nKG + FA*IR on MovieLens-25M",
               fontsize=12, fontweight="bold")
     plt.tight_layout()
     path = os.path.join(OUTPUT_DIR, "fut_curve_combined.png")

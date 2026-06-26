@@ -42,8 +42,8 @@ from tqdm import tqdm
 DATA_DIR      = "data"
 KG_OUTPUT_DIR = "outputs/kg"
 OUTPUT_DIR    = "outputs/fair"
-EMBEDDING_DIM = 64
-NUM_LAYERS    = 3
+EMBEDDING_DIM = 32
+NUM_LAYERS    = 2
 MIN_RATING    = 4
 TOP_K         = 10
 RANDOM_SEED   = 42
@@ -68,6 +68,11 @@ def load_data():
 
     pos = ratings[ratings["rating"] >= MIN_RATING][["user_id", "movie_id"]].copy()
 
+    # ── ADD THIS: Keep only active users (>=20 interactions) ──
+    user_counts  = pos["user_id"].value_counts()
+    active_users = user_counts[user_counts >= 20].index
+    pos = pos[pos["user_id"].isin(active_users)].copy()
+
     user_ids  = sorted(pos["user_id"].unique())
     movie_ids = sorted(pos["movie_id"].unique())
     user2idx  = {u: i for i, u in enumerate(user_ids)}
@@ -87,8 +92,13 @@ def load_data():
     movies["region"]          = movies["region"].fillna("unknown")
     movies["genres"]          = movies["genres"].fillna("Unknown")
 
-    return pos, movies, user2idx, movie2idx, n_users, n_movies
+    # ── ADD THIS: Keep only directors with 2+ movies ──
+    director_counts    = movies["director"].value_counts()
+    frequent_directors = set(director_counts[director_counts >= 2].index)
+    movies["director"] = movies["director"].apply(
+        lambda d: d if d in frequent_directors else "Unknown Director")
 
+    return pos, movies, user2idx, movie2idx, n_users, n_movies
 
 def split_data(pos):
     train_rows, val_rows, test_rows = [], [], []
@@ -212,42 +222,44 @@ def get_scores(model, edge_index, train_df, n_users, n_movies,
     with torch.no_grad():
         user_emb, movie_emb = model(edge_index)
 
-    seen   = train_df.groupby("user_idx")["movie_idx"].apply(set).to_dict()
-    scores = torch.matmul(user_emb, movie_emb.T).cpu().numpy()
-
-    female_movies     = set(m for m, g in movie_gender.items() if g == "female")     if movie_gender else set()
-    nonwestern_movies = set(m for m, r in movie_region.items()  if r == "non-western") if movie_region else set()
+    seen          = train_df.groupby("user_idx")["movie_idx"].apply(set).to_dict()
+    female_movies = set(m for m, g in movie_gender.items() if g == "female")     if movie_gender else set()
+    nonwestern_movies = set(m for m, r in movie_region.items() if r == "non-western") if movie_region else set()
 
     candidates = {}
-    for u in range(n_users):
-        s      = scores[u].copy()
-        seen_u = seen.get(u, set())
-        for m in seen_u:
-            if m < len(s):
-                s[m] = -np.inf
+    SCORE_BATCH = 1000
+    for start in range(0, n_users, SCORE_BATCH):
+        end = min(start + SCORE_BATCH, n_users)
+        batch_scores = torch.matmul(user_emb[start:end], movie_emb.T).cpu().numpy()
 
-        top  = np.argpartition(s, -candidate_k)[-candidate_k:]
-        top  = top[np.argsort(s[top])[::-1]]
-        pool = set(top.tolist())
+        for i, u in enumerate(range(start, end)):
+            seen_u = seen.get(u, set())
+            s = batch_scores[i].copy()
+            for m in seen_u:
+                if m < len(s):
+                    s[m] = -np.inf
 
-        # Inject top-10 female-directed unseen movies
-        female_unseen = sorted(
-            [m for m in female_movies if m not in seen_u and m < len(s)],
-            key=lambda m: s[m], reverse=True)
-        for m in female_unseen[:10]:
-            pool.add(m)
+            top  = np.argpartition(s, -candidate_k)[-candidate_k:]
+            top  = top[np.argsort(s[top])[::-1]]
+            pool = set(top.tolist())
 
-        # Inject top-10 non-western unseen movies
-        nw_unseen = sorted(
-            [m for m in nonwestern_movies if m not in seen_u and m < len(s)],
-            key=lambda m: s[m], reverse=True)
-        for m in nw_unseen[:10]:
-            pool.add(m)
+            # Inject protected movies so FA*IR has something to promote
+            female_unseen = sorted(
+                [m for m in female_movies if m not in seen_u and m < len(s)],
+                key=lambda m: s[m], reverse=True)
+            for m in female_unseen[:10]:
+                pool.add(m)
 
-        pool_list = sorted(pool, key=lambda m: s[m] if s[m] > -1e8 else -1e9, reverse=True)
-        candidates[u] = [(int(m), float(s[m])) for m in pool_list]
+            nw_unseen = sorted(
+                [m for m in nonwestern_movies if m not in seen_u and m < len(s)],
+                key=lambda m: s[m], reverse=True)
+            for m in nw_unseen[:10]:
+                pool.add(m)
 
-    return candidates
+            pool_list = sorted(pool, key=lambda m: s[m] if s[m] > -1e8 else -1e9, reverse=True)
+            candidates[u] = [(int(m), float(s[m])) for m in pool_list]
+
+    return candidates   # ← single correct return
 
 
 # ─── FA*IR RERANKING ──────────────────────────────────────────────────────────
